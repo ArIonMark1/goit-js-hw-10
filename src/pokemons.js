@@ -26,7 +26,7 @@ link.then(response => {
             return `
                     <li class="pokemon-data">
                         <h2>${pokemon.name}</h2>
-                        <p><a class='card-link' href="${pokemon.url}">Pokemon page</a></p>
+                        <p><a class='card-link' href="${pokemon.url}">Show Pokemon card</a></p>
                     </li>
             `
         }).join('');
