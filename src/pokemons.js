@@ -3,38 +3,70 @@ import './css/styles.css'
 // #################################################################
 const pokemonBlock = document.querySelector('div[class=pokemon-card]')
 const pokemonList = document.querySelector('.pokemon-list');
+const pagBack = document.querySelector('button[data-back]')
+const pagForward = document.querySelector('button[data-forward]')
 // #################################################################
 
-const params = new URLSearchParams({
-    offset: 1,
-    limit: 5
-});
+const POKEMONURL = 'https://pokeapi.co/api/v2/pokemon';
 
-const link = fetch(`https://pokeapi.co/api/v2/pokemon`)
-// #################################################################
-link.then(response => {
-    if (!response.ok) {
-        throw new Error(response.status)
+let page = 0;
+let limit = 10; 
+
+// **************
+loader();
+// **************
+
+pagBack.addEventListener('click', () => {
+    if (page <= 0) { 
+        console.log('It`s first group.')
+        return;
     }
-    return response.json()
-})
-    .then(pokemon => {
-        console.log('pokemon: ', pokemon.results)
+    page -= 10;
+    loader();
+});
+pagForward.addEventListener('click', () => {
+    page += 10;
+    loader();
+});
+// *****************************************************************
+function fetchLoad(url) { 
+    const params = new URLSearchParams({
+    offset: page,
+    limit: limit
+    });
+    
+    return fetch(`${url}?${params}`)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error(response.status)
+            }
+            return response.json()
+        });
+};
 
-        //****************************
-        const pokemonName = pokemon.results.map((pokemon) => {
-            return `
-                    <li class="pokemon-data">
-                        <h2>${pokemon.name}</h2>
-                        <p><a class='card-link' href="${pokemon.url}">Show Pokemon card</a></p>
-                    </li>
-            `
-        }).join('');
-
-        pokemonList.insertAdjacentHTML('beforeend', pokemonName)
-        //****************************
+function loader() { 
+    fetchLoad(POKEMONURL).then(pokemons => {
+        renderPosts(pokemons);
     })
-    .catch(error => console.error(`${error}:: Wrong link to serwer!!! `))
+        .catch(error => console.error(`${error}:: Wrong link to serwer!!! `))
+};
+
+function renderPosts(posts) { 
+    // console.log('pokemon: ', pokemon.results)
+
+    //****************************
+    const pokemonName = posts.results.map(({ name, url }) => {
+        return `
+                <li class="pokemon-data">
+                    <h2>${name}</h2>
+                    <p><a class='card-link' href="${url}">Show Pokemon card</a></p>
+                </li>
+            `
+    }).join('');
+    pokemonList.innerHTML = pokemonName;
+        // pokemonList.insertAdjacentHTML('beforeend', pokemonName)
+        //****************************
+};
 
 // #################################################################
 
@@ -64,8 +96,8 @@ function markupOne(pokemon) {
 
     const { name, sprites, weight, height, abilities: [...args] } = pokemon;
 
-        const pokemonAbil = args.map(element => {
-            return` <li class="list-group-item">${element.ability.name}</li> `
+        const pokemonAbil = args.map(({ability}) => {
+            return ` <li class="list-group-item">${ability.name}</li> `
         }).join('');
     
     return `

@@ -1,5 +1,6 @@
 * {
   box-sizing: border-box;
+  list-style: none;
 }
 
 body {
@@ -22,7 +23,7 @@ body {
   max-width: 240px;
 
   box-shadow: 0 0 10px rgba(0, 67, 0, 0.7);
-  background-color: green;
+  background-color: rgba(0, 128, 0, 0.7);
   border-radius: 20px;
   padding: 10px 25px;
   text-decoration: none;
@@ -37,14 +38,40 @@ body {
   max-width: 320px;
   margin-bottom: 16px;
 }
+.pokemon-container {
+  padding: 20px 50px;
+  border-bottom: 5px double goldenrod;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* align-items: center; */
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  padding: 20px;
+  /* align-self: center; */
+
+  /* border: 1px solid grey; */
+}
+.pagination-btn {
+  padding: 5px 20px;
+  min-width: 150px;
+  border: none;
+  background-color: rgba(222, 107, 87);
+  border-radius: 15px;
+  text-align: center;
+
+  font-size: 16px;
+  font-weight: 500;
+  color: rgb(255, 243, 221);
+}
 .pokemon-list {
-  list-style: none;
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
   gap: 15px;
-  padding: 20px 50px;
-  border-bottom: 5px double goldenrod;
 }
 .pokemon-list li {
   position: relative;
@@ -79,13 +106,14 @@ body {
   font-size: 16px;
 }
 .pokemon-card {
+  margin-top: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .card {
   border: 1px solid #212121;
-  max-width: 200px;
+  min-width: 200px;
   overflow: hidden;
   border-radius: 5px;
   padding: 10px;
