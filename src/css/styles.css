@@ -11,6 +11,25 @@ body {
   color: #212121;
   line-height: 1.5;
 }
+.transit {
+  padding: 20px;
+  margin-bottom: 20px;
+  /* border: 1px solid red; */
+}
+.transit-link {
+  display: flex;
+  justify-content: space-between;
+  max-width: 240px;
+
+  box-shadow: 0 0 10px rgba(0, 67, 0, 0.7);
+  background-color: green;
+  border-radius: 20px;
+  padding: 10px 25px;
+  text-decoration: none;
+  color: #fafafa;
+  font-size: 18px;
+  font-weight: 500;
+}
 
 #search-box {
   font: inherit;
