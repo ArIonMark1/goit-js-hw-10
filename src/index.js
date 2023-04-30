@@ -1,122 +1,91 @@
 import './css/styles.css';
+import 'lodash/debounce'; 
+import fetchCountries from './fetchCountries.js';
+import debounce from 'lodash/debounce';
 
-const DEBOUNCE_DELAY = 300;
-const contentBlock = document.querySelector('.country-info')
-// console.log('contentBlock ', contentBlock)
+const DEBOUNCE_DELAY = 500;
 
-const header = document.createElement('h2')
-const body = document.createElement('div')
-
+console.log('debounce: ', debounce);
 // #################################################################
 
-const params = new URLSearchParams({
-    offset: 1,
-    limit: 5
-});
-
-const link = fetch(`https://pokeapi.co/api/v2/ability?${params}`)
+const inputField = document.getElementById('search-box');
+const dataListBlock = document.querySelector('.country-list');
+const dataBlock = document.querySelector('.country-info');
+dataBlock.innerHTML = '<p>Hello from JavaScript!!!</p>'
 // #################################################################
+// !!! Створи фронтенд частину програми пошуку даних про країну за її частковою або повною назвою.
 
-link
-    .then((response) => {
-        return response.json()
-    })
-    .then((pokemon) => { 
-        console.log('pokemon: ', pokemon)
-        console.log(pokemon.results[0].name)
-        console.log(pokemon.pokemon)
+// 1 Використовуй публічний API " https://restcountries.com/ 2 ", а саме ресурс name, який повертає масив об'єктів країн,
+// що задовольнили критерій пошуку.Додай мінімальне оформлення елементів інтерфейсу.
 
-        const blockList = pokemon.results.map(
-            (block, index) =>
-                `<p><span>ID: ${index + 1}; Pokemon name:</span>  <span>${block.name.toUpperCase()}</span></p>`
-        ).join('')
-        body.innerHTML = blockList;
-        
-    })
-    .catch((err) => { console.log(err) })
+// 2 Напиши функцію fetchCountries(name), яка робить HTTP-запит на ресурс name і повертає проміс з масивом країн - результатом запиту.
+// Винеси її в окремий файл fetchCountries.js і зроби іменований експорт.
 
+// 3 Тобі потрібні тільки наступні властивості:
+/*
+** name.official - повна назва країни
+** capital - столиця
+** population - населення
+** flags.svg - посилання на зображення прапора
+** languages - масив мов
+*/
+// **************************************************************************
+inputField.addEventListener('input', debounce(activeSearch, DEBOUNCE_DELAY));
+// **************************************************************************
 
-// #################################################################
+function activeSearch(evt) { 
 
-contentBlock.style.backgroundColor = '#d4858e';
-contentBlock.style.color = 'white';
-contentBlock.append(header, body);
-// #################################################################
+    const requestName = evt.target.value.trim();
+    searchCountry(requestName);
+}
 
+function searchCountry(countriesName) { 
 
-const fetchPostsBtn = document.querySelector(".btn");
-const userList = document.querySelector(".posts");
-const alertPopup = document.querySelector(".alert");
-let isAlertVisible = false;
+    fetchCountries(countriesName)
+        .then((countries) => {
 
-// Controls the group number
-let page = 1;
-// Controls the number of items in the group
-let limit = 5;
-// In our case total number of pages is calculated on frontend
-const totalPages = 100 / limit;
-// *****************************************************************
+            if (countries.length > 1) {
 
-fetchPostsBtn.addEventListener("click", () => {
-  // Check the end of the collection to display an alert
-  if (page > totalPages) {
-    return toggleAlertPopup();
-  }
+                const listCountries = countries.map(
+                    ({ flags, name }) => `
+                        <li>
+                            <img width="100px" src="${flags.svg}" alt="${name.official}"> 
+                            <span>${name.official}</span>
+                        </li>`).join('');
+                
+                console.log(listCountries);
+                renderMarkup(listCountries);
+            }
+            else { 
+                console.log('Dig')
 
-  fetchPosts()
-    .then((posts) => {
-      renderPosts(posts);
-      // Increase the group number
-      page += 1;
+                const countryMarkup = countries.map(({ flags, name, capital, population, languages }) => {
+                const countryLanguages = Object.values(languages);
 
-      // Replace button text after first request
-      if (page > 1) {
-        fetchPostsBtn.textContent = "Fetch more posts";
-      }
-    })
-    .catch((error) => console.log(error));
-});
-// *****************************************************************
-function fetchPosts() {
-  const params = new URLSearchParams({
-    _limit: limit,
-    _page: page
-  });
+                return `
+                    <img width="100px" src="${flags.svg}" alt="${name.official}" /> <span><h2>${name.official}</h2></span>
+                    <p><b>Capital: </b>${capital}</p>
+                    <p><b>Population: </b>${population}</p>
+                    <p><b>Languages: </b>${countryLanguages}</p>
+                `
+            }).join('');
 
-  return fetch(`https://jsonplaceholder.typicode.com/posts?${params}`).then(
-    (response) => {
-      if (!response.ok) {
-        throw new Error(response.status);
-      }
-      return response.json();
+            renderMarkup(countryMarkup);
+            }
+            
+        }).catch((err) => console.error(err));
+}
+function renderMarkup(data) { 
+
+    if (typeof data === 'object') {
+        dataListBlock.innerHTML = data;
     }
-  );
+    dataBlock.innerHTML = data;
 }
-// *****************************************************************
-// *****************************************************************
-function renderPosts(posts) {
-  const markup = posts
-    .map(({ id, title, body, userId }) => {
-      return `<li>
-          <h2 class="post-title">${title.slice(0, 30)}</h2>
-          <p><b>Post id</b>: ${id}</p>
-          <p><b>Author id</b>: ${userId}</p>
-          <p class="post-body">${body}</p>
-        </li>`;
-    })
-    .join("");
-  userList.insertAdjacentHTML("beforeend", markup);
-}
-// *****************************************************************
-// *****************************************************************
-function toggleAlertPopup() {
-  if (isAlertVisible) {
-    return;
-  }
-  isAlertVisible = true;
-  alertPopup.classList.add("is-visible");
-  setTimeout(() => {
-    alertPopup.classList.remove("is-visible");
-    isAlertVisible = false;
-  }, 3000);
-}
+
+
+
+
+
+// **********************
+// **********************
