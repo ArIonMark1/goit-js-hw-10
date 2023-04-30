@@ -29,6 +29,17 @@ dataBlock.innerHTML = '<p>Hello from JavaScript!!!</p>'
 ** flags.svg - посилання на зображення прапора
 ** languages - масив мов
 */
+
+// 1 Якщо користувач повністю очищає поле пошуку, то HTTP-запит не виконується, а розмітка списку країн або інформації про країну зникає.
+// 2 Якщо у відповіді бекенд повернув більше ніж 10 країн, в інтерфейсі з'являється повідомлення про те,
+//  що назва повинна бути специфічнішою.
+//  Для повідомлень використовуй бібліотеку notiflix і виводь такий рядок "Too many matches found.
+//  Please enter a more specific name.".
+// 3 Якщо бекенд повернув від 2-х до 10-и країн, під тестовим полем відображається список знайдених країн.
+//  Кожен елемент списку складається з прапора та назви країни.
+// 4 Якщо користувач ввів назву країни, якої не існує, бекенд поверне не порожній масив,
+//  а помилку зі статус кодом 404 - не знайдено
+//  Додай повідомлення "Oops, there is no country with that name" у разі помилки, використовуючи бібліотеку notiflix.
 // **************************************************************************
 inputField.addEventListener('input', debounce(activeSearch, DEBOUNCE_DELAY));
 // **************************************************************************
@@ -49,7 +60,7 @@ function searchCountry(countriesName) {
                 const listCountries = countries.map(
                     ({ flags, name }) => `
                         <li>
-                            <img width="100px" src="${flags.svg}" alt="${name.official}"> 
+                            <img width="50px" src="${flags.svg}" alt="${name.official}"> 
                             <span>${name.official}</span>
                         </li>`).join('');
                 
@@ -63,7 +74,7 @@ function searchCountry(countriesName) {
                 const countryLanguages = Object.values(languages);
 
                 return `
-                    <img width="100px" src="${flags.svg}" alt="${name.official}" /> <span><h2>${name.official}</h2></span>
+                    <span class='country-header'><img width="30px" src="${flags.svg}" alt="${name.official}" /> <h2>${name.official}</h2></span>
                     <p><b>Capital: </b>${capital}</p>
                     <p><b>Population: </b>${population}</p>
                     <p><b>Languages: </b>${countryLanguages}</p>

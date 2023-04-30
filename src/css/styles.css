@@ -127,3 +127,14 @@ body {
   border: none;
   border-radius: 5px;
 }
+
+.country-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+.country-header h2 {
+  font-size: 32px;
+  margin: 0;
+}
